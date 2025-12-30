@@ -3,8 +3,8 @@ services:
   - name: backend
     type: web
     env: docker
-    dockerfilePath: backend/Dockerfile
-    dockerContext: .
+    dockerfilePath: Dockerfile
+    dockerContext: backend
     envVars:
       - key: NODE_ENV
         value: production
@@ -16,8 +16,8 @@ services:
   - name: frontend  
     type: web
     env: docker
-    dockerfilePath: frontend/Dockerfile
-    dockerContext: .
+    dockerfilePath: Dockerfile
+    dockerContext: frontend
     
   - name: mongo
     type: database
