@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install --only=production --legacy-peer-deps
+RUN npm install --omit=dev --legacy-peer-deps
 
 # Production stage
 FROM node:18-alpine
