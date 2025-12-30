@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
+// Use environment variable for API URL, fallback to relative path for local dev
+const API_URL = import.meta.env.VITE_API_URL || '';
+
 function App() {
   const [tasks, setTasks] = useState([])
   const [newTask, setNewTask] = useState('')
@@ -15,7 +18,7 @@ function App() {
         setTasks([]);
         return;
       }
-      const url = `/api/tasks?user=${encodeURIComponent(newUser)}`;
+      const url = `${API_URL}/api/tasks?user=${encodeURIComponent(newUser)}`;
       const res = await fetch(url);
       if (!res.ok) throw new Error('Failed to fetch');
       const data = await res.json();
@@ -36,7 +39,7 @@ function App() {
     setError('')
 
     try {
-      const res = await fetch('/api/tasks', {
+      const res = await fetch(`${API_URL}/api/tasks`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: newTask, user: newUser }),
@@ -65,7 +68,7 @@ function App() {
   // Delete a task
   const deleteTask = async (id) => {
     try {
-      const url = newUser ? `/api/tasks/${id}?user=${encodeURIComponent(newUser)}` : `/api/tasks/${id}`;
+      const url = newUser ? `${API_URL}/api/tasks/${id}?user=${encodeURIComponent(newUser)}` : `${API_URL}/api/tasks/${id}`;
       const res = await fetch(url, { method: 'DELETE' });
       const data = await res.json();
       // fetchTasks(); // No longer need to re-fetch

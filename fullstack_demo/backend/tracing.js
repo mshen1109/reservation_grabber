@@ -8,7 +8,7 @@ const { ExpressInstrumentation } = require('@opentelemetry/instrumentation-expre
 
 // Configure the OTLP trace exporter (Jaeger)
 const traceExporter = new OTLPTraceExporter({
-    url: 'http://jaeger:4318/v1/traces',
+    url: process.env.JAEGER_URL || 'http://jaeger:4318/v1/traces',
 });
 
 const sdk = new NodeSDK({
