@@ -2,17 +2,38 @@ require('./tracing');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const helmet = require('helmet');
+const compression = require('compression');
+const rateLimit = require('express-rate-limit');
 const Task = require('./models/Task');
 const { startTelemetryCron } = require('./chronos');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 const { Worker } = require('worker_threads');
 const path = require('path');
 
-// Middleware
+// Environment validation
+if (!process.env.MONGO_URI && process.env.NODE_ENV === 'production') {
+    console.error('FATAL: MONGO_URI environment variable is required in production');
+    process.exit(1);
+}
+
+// Security Middleware
+app.use(helmet());
+app.use(compression());
 app.use(cors());
+
+// Rate Limiting
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per windowMs
+    message: 'Too many requests from this IP, please try again later.',
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+app.use('/api/', limiter);
 
 // Custom Body Parsing Middleware
 const parseBody = (req, res, next) => {
