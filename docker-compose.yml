@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  reservation-grabber:
+    build: .
+    image: reservation-grabber:latest
+    container_name: reservation-grabber
+    environment:
+      - HEADLESS=true
+      - NTFY_TOPIC=${NTFY_TOPIC:-mias_reservation_alerts}
+    volumes:
+      - ./chrome_profile:/app/chrome_profile
+    restart: unless-stopped
