@@ -23,7 +23,29 @@ if (!process.env.MONGO_URI && process.env.NODE_ENV === 'production') {
 // Security Middleware
 app.use(helmet());
 app.use(compression());
-app.use(cors());
+
+// CORS Configuration for Railway
+const corsOptions = {
+    origin: function (origin, callback) {
+        // Allow requests from Railway frontend or no origin (same-origin)
+        const allowedOrigins = [
+            'https://frontend-production-0d0e.up.railway.app',
+            /\.railway\.app$/  // Allow any Railway subdomain
+        ];
+
+        if (!origin || allowedOrigins.some(allowed =>
+            typeof allowed === 'string' ? allowed === origin : allowed.test(origin)
+        )) {
+            callback(null, true);
+        } else {
+            callback(null, true); // Allow all for now, can restrict later
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
+app.use(cors(corsOptions));
 
 // Rate Limiting
 const limiter = rateLimit({
