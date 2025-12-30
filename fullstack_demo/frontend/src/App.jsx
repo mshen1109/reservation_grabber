@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
-// Use environment variable for API URL, fallback to relative path for local dev
-const API_URL = import.meta.env.VITE_API_URL || '';
+// Detect API URL at runtime - works in Railway without rebuild
+// In production (Railway), frontend and backend are separate domains
+// In development, use relative URLs
+const API_URL = window.location.hostname.includes('railway.app')
+  ? 'https://backend-production-0d0e.up.railway.app'
+  : (import.meta.env.VITE_API_URL || '');
 
 function App() {
   const [tasks, setTasks] = useState([])
